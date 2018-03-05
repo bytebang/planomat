@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+	<solutionClass>at.acam.planomat.domain.AirportSolution</solutionClass>
+	<entityClass>at.acam.planomat.domain.Plane</entityClass>
+	<scoreDirectorFactory>
+		<scoreDefinitionType>HARD_SOFT</scoreDefinitionType>
+		<scoreDrl>PlanomatScoreRules.drl</scoreDrl>
+	</scoreDirectorFactory>
+	<localSearch>
+		<termination>
+			<secondsSpentLimit>1</secondsSpentLimit>
+			<!-- <bestScoreLimit>0hard/0soft</bestScoreLimit> -->
+		</termination>
+		<acceptor>
+			<entityTabuSize>7</entityTabuSize>
+		</acceptor>
+		<forager>
+			<acceptedCountLimit>1000</acceptedCountLimit>
+		</forager>
+	</localSearch>
+</solver>

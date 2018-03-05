@@ -1,0 +1,38 @@
+import org.joda.time.Interval;
+import at.acam.planomat.domain.Plane;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+global HardSoftScoreHolder scoreHolder;
+
+rule "singlePlaneTaxiRule"
+//one plane can be taxing or taking off at any given time
+	when
+		$plane : Plane($taxiInterval1 : taxiInterval, $id : id);
+		$plane2 : Plane($taxiInterval2 : taxiInterval, id != $id);
+	then
+		int overlap = 0;
+		if($taxiInterval1.overlap($taxiInterval2)!=null)
+		{
+			overlap = ((int)$taxiInterval1.overlap($taxiInterval2).toDurationMillis()/1000);
+		}
+		scoreHolder.addHardConstraintMatch(kcontext, (-1)*overlap);
+end
+
+rule "tsatAfterTTOTRule"
+	when
+		$plane : Plane($tobt : tobt, $tsat : tsat != null && $tsat.isBefore($tobt));
+	then
+		int difference = (int) (new Interval($tsat, $tobt).toDurationMillis())/1000;
+		scoreHolder.addHardConstraintMatch(kcontext, (-1)*difference);
+end
+
+
+rule "minimiseDelayRule"
+	when
+		$plane : Plane($tobt : tobt, $tsat : tsat != null, $tobt.isBefore($tsat));
+	then		
+		int delay = (int) (new Interval($tobt, $tsat).toDuration().getStandardSeconds());
+		scoreHolder.addHardConstraintMatch(kcontext, (-1)*delay);
+end
+
+

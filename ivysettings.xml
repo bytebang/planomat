@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ivysettings>
+<ivysettings>
+	<settings defaultResolver="default-chain"/>
+	<resolvers>
+	
+		<!-- 
+		<filesystem name="local">
+			<ivy pattern="${ivy.default.ivy.user.dir}/local/[organisation]/[module]/ivys/ivy-[revision].xml"/>
+			<artifact pattern="${ivy.default.ivy.user.dir}/local/[organisation]/[module]/[type]s/[artifact]-[revision].[ext]"/>
+		</filesystem>
+		<url name="spring-maven-milestone" m2compatible="true">
+			<artifact pattern="http://s3.amazonaws.com/maven.springframework.org/milestone/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+		</url>
+		<url name="com.springsource.repository.bundles.release" m2compatible="true">
+			<artifact pattern="http://repository.springsource.com/maven/bundles/releases/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]"/>
+		</url>
+		<url name="com.springsource.repository.bundles.external" m2compatible="true">
+			<artifact pattern="http://repository.springsource.com/maven/bundles/external/[organisation]/[module]/[revision]/[artifact]-[revision].[ext]" />
+		</url>
+		-->
+		
+		<ibiblio name="jboss" root="http://repository.jboss.org/" m2compatible="true"/>
+		<ibiblio name="ibilio" m2compatible="true"/>
+		<chain name="default-chain">
+			<!-- 
+			<resolver ref="local"/>
+			<resolver ref="spring-maven-milestone"/>
+			<resolver ref="com.springsource.repository.bundles.release"/>
+			<resolver ref="com.springsource.repository.bundles.external"/>
+			-->
+			<resolver ref="ibilio"/>
+			<resolver ref="jboss"/>
+		</chain>
+	</resolvers>
+</ivysettings>

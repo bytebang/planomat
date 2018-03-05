@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+
+<!-- Compiles all the needed Classes -->
+<project basedir="." xmlns:ivy="antlib:org.apache.ivy.ant" default="run" name="Planomat">
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+    <property name="target" value="1.8"/>
+    <property name="source" value="1.8"/>
+	
+	
+	<property name="version" value="0.1"/>							<!-- Versionnumber -->
+	<property name="lib.dir" value="vendor"/>   					<!-- General library folder -->
+	<property name="ivy.dir" value="${lib.dir}\ivy"/> 				<!-- Directory where ivy should place its dependencies -->
+	<property name="bin.dir" value="bin"/>							<!-- Compile directory -->
+	<property name="jar.dir" value="jar"/> 							<!-- Export dir for JAR File -->
+	<property name="main.class" value="at.acam.planomat.Starter"/> 	<!-- Startclass -->
+		
+	<path id="project.classpath">
+        <pathelement location="${bin.dir}"/>
+        <pathelement location="${lib.dir}"/>
+		<fileset dir="${ivy.dir}">
+			<include name="**/*.jar" />
+		</fileset>
+    </path>
+		
+	<!-- Creates Directories -->
+	<target name="init">
+        <mkdir dir="${bin.dir}"/>
+		<mkdir dir="${jar.dir}"/>
+        <copy includeemptydirs="false" todir="${bin.dir}">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+		
+		<!-- Fetches dependencies via ivy -->
+		<ivy:settings file="ivysettings.xml" />
+		<ivy:retrieve pattern="${ivy.dir}/[type]s/[artifact]-[revision](-[classifier]).[ext]" type="jar,bundle" sync="true"/>
+    </target>
+	
+	<!-- Deletes all the garbage -->
+	<target name="clean">
+        <delete dir="${bin.dir}"/>
+		<delete dir="${jar.dir}"/>
+		<delete dir="${ivy.dir}"/>
+		<!--ivy:cleancache /-->
+    </target>
+		
+	<!-- builds the project -->
+	<target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" source="${source}" target="${target}" includeantruntime="false">
+            <src path="src"/>
+            <classpath refid="project.classpath"/>
+        </javac>
+    </target>
+    
+	<!-- Ruft das erzeugte Jar auf -->
+    <target name="run" depends="create_jar">
+        <java jar="${jar.dir}/${ant.project.name}-${version}.${build.number}.jar" failonerror="true" fork="yes">
+        	<arg value="--help"/>
+        	<classpath refid="project.classpath"/>
+        </java>
+    </target>
+	
+	<!-- Erzeugt das Jar File und legt es im Unterordner jar ab -->
+	<target name="create_jar" depends="build">
+		<buildnumber/>
+        <jar destfile="${jar.dir}/${ant.project.name}-${version}.${build.number}.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="${bin.dir}"/>
+        	<zipgroupfileset dir="${lib.dir}" includes="**/*.jar" />
+        	<zipgroupfileset dir="${ivy.dir}" includes="**/*.jar" />
+        </jar>
+    </target>
+    	
+</project>
